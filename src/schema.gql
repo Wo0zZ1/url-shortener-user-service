@@ -1,0 +1,41 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserProfileEntity {
+  id: ID!
+  email: String
+  userName: String!
+  firstName: String
+  lastName: String
+}
+
+type UserStatsEntity {
+  id: ID!
+  created_links: Int
+}
+
+type UserEntity {
+  id: ID!
+  uuid: String
+  type: UserType!
+  createdAt: Timestamp!
+  userProfile: UserProfileEntity
+  userStats: UserStatsEntity
+}
+
+enum UserType {
+  Admin
+  User
+  Guest
+}
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+type Query {
+  users: [UserEntity!]!
+  userById(id: Int!): UserEntity
+}

@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model BaseUser {
+  id          Int          @id @default(autoincrement())
+  type        UserType     @default(User)
+  uuid        String?      @unique
+  createdAt   DateTime     @default(now())
+  userProfile UserProfile?
+  userStats   userStats?
+
+  @@index([type])
+  @@map("users")
+}
+
+model UserProfile {
+  id         Int      @id @default(autoincrement())
+  baseUserId Int      @unique
+  email      String?  @unique
+  userName   String
+  firstName  String?
+  lastName   String?
+  baseUser   BaseUser @relation(fields: [baseUserId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+model userStats {
+  id            Int      @id @default(autoincrement())
+  baseUserId    Int      @unique
+  created_links Int      @default(0)
+  baseUser      BaseUser @relation(fields: [baseUserId], references: [id], onDelete: Cascade)
+
+  @@map("user_stats")
+}
+
+enum UserType {
+  Admin
+  User
+  Guest
+
+  @@map("user_type")
+}
