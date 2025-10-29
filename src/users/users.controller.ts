@@ -32,15 +32,15 @@ import { UsersService } from './users.service'
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
-	@Post()
-	async createUser(@Body() createUserDto: CreateUserDto): Promise<CreateUserResponse> {
-		return this.usersService.create(createUserDto)
-	}
-
 	@Get()
 	async getUsers(): Promise<GetAllUsersResponse> {
 		const users = await this.usersService.findAll()
 		return users
+	}
+
+	@Post()
+	async createUser(@Body() createUserDto: CreateUserDto): Promise<CreateUserResponse> {
+		return this.usersService.create(createUserDto)
 	}
 
 	@Get('id/:id')
