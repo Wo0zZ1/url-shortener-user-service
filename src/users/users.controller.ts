@@ -4,7 +4,6 @@ import {
 	Param,
 	Post,
 	Body,
-	Delete,
 	ParseIntPipe,
 	NotFoundException,
 	Patch,
@@ -21,8 +20,6 @@ import {
 	GetUserByUuidResponse,
 	UpdateUserByIdResponse,
 	UpdateUserByUuidResponse,
-	DeleteUserByIdResponse,
-	DeleteUserByUuidResponse,
 } from '@wo0zz1/url-shortener-shared'
 
 import { UsersService } from './users.service'
@@ -71,17 +68,5 @@ export class UsersController {
 		@Body() updateUserDto: UpdateUserDto,
 	): Promise<UpdateUserByUuidResponse> {
 		return await this.usersService.updateByUuid(uuid, updateUserDto)
-	}
-
-	@Delete('id/:id')
-	async deleteUser(
-		@Param('id', ParseIntPipe) id: number,
-	): Promise<DeleteUserByIdResponse> {
-		return await this.usersService.deleteById(id)
-	}
-
-	@Delete('uuid/:uuid')
-	async deleteUserByUuid(@Param('uuid') uuid: string): Promise<DeleteUserByUuidResponse> {
-		return await this.usersService.deleteByUuid(uuid)
 	}
 }

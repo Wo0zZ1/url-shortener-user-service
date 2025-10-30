@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
 
 import { AppModule } from './app.module'
-import { getUserMicroserviceConfig } from '@wo0zz1/url-shortener-shared'
+import { EventQueue, getMicroserviceConfig } from '@wo0zz1/url-shortener-shared'
 
 async function bootstrap() {
 	const PORT = process.env.PORT
@@ -26,7 +26,7 @@ async function bootstrap() {
 	console.log(`🚀 Users Service is running on: http://localhost:${PORT}`)
 
 	try {
-		app.connectMicroservice(getUserMicroserviceConfig(RABBITMQ_URL))
+		app.connectMicroservice(getMicroserviceConfig(RABBITMQ_URL, EventQueue.USER_SERVICE))
 		await app.startAllMicroservices()
 		console.log('Users Service started with RabbitMQ')
 	} catch (error) {

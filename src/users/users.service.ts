@@ -1,11 +1,30 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
-import { CreateUserDto, UpdateUserDto, UserEntity } from '@wo0zz1/url-shortener-shared'
+import {
+	BadRequestException,
+	Inject,
+	Injectable,
+	NotFoundException,
+	OnModuleInit,
+} from '@nestjs/common'
+import { ClientProxy } from '@nestjs/microservices'
+import {
+	CreateUserDto,
+	EVENT_EMITTER_NAME,
+	UpdateUserDto,
+	UserEntity,
+} from '@wo0zz1/url-shortener-shared'
 
 import { PrismaService } from 'src/prisma/prisma.service'
 
 @Injectable()
-export class UsersService {
-	constructor(private readonly prismaService: PrismaService) {}
+export class UsersService implements OnModuleInit {
+	constructor(
+		private readonly prismaService: PrismaService,
+		@Inject(EVENT_EMITTER_NAME) private readonly eventEmitter: ClientProxy,
+	) {}
+
+	async onModuleInit() {
+		await Promise.all([this.eventEmitter.connect()])
+	}
 
 	async create(data: CreateUserDto): Promise<UserEntity> {
 		const isGuest = data.type === 'Guest'
@@ -139,23 +158,6 @@ export class UsersService {
 		try {
 			const user = await this.prismaService.baseUser.delete({
 				where: { id },
-				include: {
-					userProfile: true,
-					userStats: true,
-				},
-			})
-
-			return user
-		} catch (error) {
-			if (error.code === 'P2025') throw new NotFoundException('User not found')
-			throw error
-		}
-	}
-
-	async deleteByUuid(uuid: string): Promise<UserEntity> {
-		try {
-			const user = await this.prismaService.baseUser.delete({
-				where: { uuid },
 				include: {
 					userProfile: true,
 					userStats: true,
